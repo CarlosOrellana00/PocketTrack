@@ -13,8 +13,10 @@
     </script>
 
     <!-- Tabler CSS -->
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/css/tabler.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.6.1/dist/css/tabler.min.css">
+
+    <!-- Iconos de Tabler -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.36.1/dist/tabler-icons.min.css">
 </head>
 
 <body>
@@ -46,23 +48,61 @@
                     <ul class="navbar-nav pt-lg-3">
 
                         <li class="nav-item">
-                            <a class="nav-link active"
-                               href="{{ route('dashboard') }}">
+                            <a class="nav-link active d-flex align-items-center gap-3 py-3"
+                            href="{{ route('dashboard') }}">
+
+                                <span class="nav-link-icon">
+                                    <i class="ti ti-home fs-2"></i>
+                                </span>
+
                                 <span class="nav-link-title">
-                                    Dashboard
+                                    Inicio
                                 </span>
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <span class="nav-link text-secondary">
-                                Catálogo de gastos (próximamente)
+                            <span class="nav-link d-flex align-items-center gap-3 py-3 text-secondary">
+
+                                <span class="nav-link-icon">
+                                    <i class="ti ti-circle-plus fs-2"></i>
+                                </span>
+
+                                <span class="nav-link-title">
+                                    Agregar Gasto
+                                </span>
                             </span>
                         </li>
 
                         <li class="nav-item">
-                            <span class="nav-link text-secondary">
-                                Comparativas (próximamente)
+                            <span class="nav-link d-flex align-items-center gap-3 py-3 text-secondary">
+
+                                <span class="nav-link-icon">
+                                    <i class="ti ti-list-details fs-2"></i>
+                                </span>
+
+                                <span class="nav-link-title">
+                                    Catálogo de gastos
+                                    <small class="d-block text-secondary">
+                                        Próximamente
+                                    </small>
+                                </span>
+                            </span>
+                        </li>
+
+                        <li class="nav-item">
+                            <span class="nav-link d-flex align-items-center gap-3 py-3 text-secondary">
+
+                                <span class="nav-link-icon">
+                                    <i class="ti ti-chart-bar fs-2"></i>
+                                </span>
+
+                                <span class="nav-link-title">
+                                    Comparativas
+                                    <small class="d-block text-secondary">
+                                        Próximamente
+                                    </small>
+                                </span>
                             </span>
                         </li>
 
