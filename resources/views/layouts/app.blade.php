@@ -62,16 +62,18 @@
                         </li>
 
                         <li class="nav-item">
-                            <span class="nav-link d-flex align-items-center gap-3 py-3 text-secondary">
+                            <a class="nav-link d-flex align-items-center gap-3 py-3"
+                            href="{{ route('monthly-accounts.create') }}">
 
                                 <span class="nav-link-icon">
                                     <i class="ti ti-circle-plus fs-2"></i>
                                 </span>
 
                                 <span class="nav-link-title">
-                                    Agregar Gasto
+                                    Agregar Registro Gasto
                                 </span>
-                            </span>
+
+                            </a>
                         </li>
 
                         <li class="nav-item">

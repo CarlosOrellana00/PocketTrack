@@ -13,12 +13,14 @@
     </span>
 
     <div class="ms-auto d-flex flex-wrap align-items-center gap-2">
+        
+        <a href="{{ route('monthly-accounts.create') }}"
+        class="btn btn-primary">
 
-        <!-- Botón de creación (pendiente de ruta) -->
-        <button type="button" class="btn btn-primary" disabled>
             <i class="ti ti-plus me-1"></i>
-            Agregar Gasto
-        </button>
+            Agregar Registro Gasto
+        </a>
+
 
         <!-- Búsqueda por texto -->
         <div class="input-icon">

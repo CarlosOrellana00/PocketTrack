@@ -36,7 +36,7 @@ class MonthlyAccountController extends Controller
     // Mostrar el formulario para crear una contabilidad.
     public function create(): View
     {
-        return view('monthly-accounts.create');
+        return view('monthly_accounts.create');
     }
 
     // Guardar una nueva contabilidad.
