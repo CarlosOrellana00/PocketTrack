@@ -77,17 +77,17 @@ class MonthlyAccountController extends Controller
 
     // Mostrar el documento mensual.
     public function show(MonthlyAccount $monthlyAccount): View
-    {
-        $monthlyAccount->load([
-            'expenseItems.category',
-            'expenseItems.expense',
-        ]);
+{
+    $monthlyAccount->load([
+        'expenseItems.category',
+        'expenseItems.expense',
+    ]);
 
-        return view(
-            'monthly-accounts.show',
-            compact('monthlyAccount')
-        );
-    }
+    return view(
+        'monthly_accounts.show',
+        compact('monthlyAccount')
+    );
+}
 
     // Mostrar el formulario de edición.
     public function edit(MonthlyAccount $monthlyAccount): View
