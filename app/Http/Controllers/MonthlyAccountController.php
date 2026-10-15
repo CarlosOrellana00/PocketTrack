@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\MonthlyAccount;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\View;
+use App\Models\Category;
 
 class MonthlyAccountController extends Controller
 {
@@ -77,17 +78,23 @@ class MonthlyAccountController extends Controller
 
     // Mostrar el documento mensual.
     public function show(MonthlyAccount $monthlyAccount): View
-{
-    $monthlyAccount->load([
-        'expenseItems.category',
-        'expenseItems.expense',
-    ]);
+    {
+        // Cargar los gastos asociados al registro mensual
+        // junto con sus categorías y gastos de catálogo.
+        $monthlyAccount->load([
+            'expenseItems.category',
+            'expenseItems.expense',
+        ]);
 
-    return view(
-        'monthly_accounts.show',
-        compact('monthlyAccount')
-    );
-}
+        // Obtener las categorías registradas en la base de datos.
+        $categories = Category::orderBy('name')->get();
+
+        // Enviar el registro mensual y las categorías a la vista.
+        return view(
+            'monthly_accounts.show',
+            compact('monthlyAccount', 'categories')
+        );
+    }
 
     // Mostrar el formulario de edición.
     public function edit(MonthlyAccount $monthlyAccount): View

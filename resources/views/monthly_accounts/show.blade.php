@@ -126,7 +126,170 @@
     </div>
 
     {{-- Sección de próximos desarrollos --}}
-    <div class="card">
+
+    
+{{-- Formulario para agregar gastos --}}
+<div class="card mt-3">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="ti ti-circle-plus me-2"></i>
+            Agregar gasto al registro mensual
+        </h3>
+    </div>
+
+    <div class="card-body">
+
+            <p class="text-secondary mb-4">
+                Registra un nuevo gasto en este documento mensual.
+            </p>
+
+            {{-- Mostrar errores de validación del formulario --}}
+
+
+        <!--errores de formulario  -->
+        <!-- @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+
+                <div class="d-flex align-items-center mb-2">
+                    <i class="ti ti-alert-circle me-2"></i>
+                    <strong>No se pudo registrar el gasto.</strong>
+                </div>
+
+                <ul class="mb-0">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Cerrar">
+                </button>
+
+            </div>
+         @endif -->
+
+            <form id="expenseForm" action="{{ route('monthly-accounts.expenses.store', ['monthlyAccount' => $monthlyAccount->id]) }}" method="POST">
+            @csrf
+
+                <div class="row g-3">
+
+                    {{-- Categoría --}}
+                    <div class="col-12">
+                        <label for="category_id" class="form-label">
+                            Tipo de gasto *
+                        </label>
+
+                        <select name="category_id" id="category_id" class="form-select" required>
+                            <option value="">Seleccionar categoría</option>
+                            @foreach ($categories as $category)
+                                <option
+                                    value="{{ $category->id }}"
+                                    @selected(old('category_id') == $category->id)
+                                >
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <small class="form-hint">
+                            Selecciona la categoría del gasto.
+                        </small>
+                    </div>
+
+                    {{-- Nombre --}}
+                    <div class="col-12">
+                        <label for="expense_name" class="form-label">
+                            Nombre del gasto *
+                        </label>
+
+                        <input type="text" name="name" id="expense_name" class="form-control" placeholder="Ej.: Cuenta de electricidad" maxlength="150" required>
+                        <small class="form-hint">
+                            Ingresa un nombre descriptivo para el gasto.
+                        </small>
+                    </div>
+
+                    {{-- Monto --}}
+                    <div class="col-md-6">
+                        <label for="amount" class="form-label">
+                            Monto (CLP) *
+                        </label>
+
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+
+                            <input type="number" name="amount" id="amount" class="form-control" placeholder="45000" min="1" step="1" required>
+                        </div>
+
+                        <small class="form-hint">
+                            Ingresa el monto en pesos chilenos.
+                        </small>
+                    </div>
+
+                    {{-- Fecha --}}
+                    <div class="col-md-6">
+                        <label for="expense_date" class="form-label">
+                            Fecha del gasto
+                        </label>
+
+                        <input type="date" name="expense_date" id="expense_date" class="form-control">
+                        <small class="form-hint">
+                            Fecha en que se realizó el gasto (opcional).
+                        </small>
+                    </div>
+
+                    {{-- Recurrencia --}}
+                    <div class="col-12 mt-4">
+                        <label class="form-check">
+                            <input type="checkbox" name="is_recurring" id="is_recurring" value="1" class="form-check-input">
+                            <span class="form-check-label">
+                                Gasto permanente (repetir en próximos meses)
+                            </span>
+                        </label>
+
+                        <small class="form-hint ms-4">
+                            Marca esta opción si el gasto debe repetirse
+                            en futuros registros mensuales.
+                        </small>
+                    </div>
+
+                    {{-- Descripción --}}
+                    <div class="col-12 mt-3">
+                        <label for="description" class="form-label">
+                            Descripción (opcional)
+                        </label>
+
+                        <textarea name="description" id="description" class="form-control" rows="3" maxlength="1000" placeholder="Detalles adicionales...">
+                        </textarea>
+
+                        <small class="form-hint">
+                            Puedes agregar observaciones o notas del gasto.
+                        </small>
+                    </div>
+
+                </div>
+
+                {{-- Acciones --}}
+                <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+
+                    <button type="reset" class="btn btn-outline-secondary">
+                        <i class="ti ti-refresh me-1"></i>
+                        Limpiar
+                    </button>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="ti ti-plus me-1"></i>
+                        Agregar gasto
+                    </button>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- <div class="card">
 
         <div class="card-header">
             <h5 class="card-title mb-0">
@@ -145,7 +308,7 @@
             </p>
 
         </div>
-    </div>
+    </div> -->
 
 </div>
 
