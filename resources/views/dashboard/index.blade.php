@@ -114,35 +114,23 @@
                             @endif
 
                         </td>
-
                         <!-- Acciones -->
                         <td class="text-center">
-
                             <div class="d-flex justify-content-center gap-2">
 
-                                <button class="btn btn-sm btn-outline-secondary"
-                                        title="Editar"
-                                        disabled>
+                                <a href="{{ route('monthly-accounts.show', $account->id) }}" class="btn btn-sm btn-outline-light" title="Editar registro" aria-label="Editar registro mensual">
                                     <i class="ti ti-edit"></i>
-                                </button>
+                                </a>
 
-                                <button class="btn btn-sm btn-outline-danger"
-                                        title="Exportar PDF"
-                                        disabled>
+                                <button class="btn btn-sm btn-outline-danger" title="Exportar PDF" disabled>
                                     <i class="ti ti-file-type-pdf"></i>
                                 </button>
-
-                                <button class="btn btn-sm btn-outline-success"
-                                        title="Exportar Excel"
-                                        disabled>
+                                <button class="btn btn-sm btn-outline-success" title="Exportar Excel"disabled>
                                     <i class="ti ti-file-spreadsheet"></i>
                                 </button>
-
                             </div>
-
                         </td>
                     </tr>
-
                 @empty
 
                     <tr id="emptyState">
