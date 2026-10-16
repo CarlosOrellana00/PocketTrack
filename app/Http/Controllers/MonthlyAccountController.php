@@ -99,10 +99,7 @@ class MonthlyAccountController extends Controller
     // Mostrar el formulario de edición.
     public function edit(MonthlyAccount $monthlyAccount): View
     {
-        return view(
-            'monthly-accounts.edit',
-            compact('monthlyAccount')
-        );
+        return view('monthly_accounts.edit',compact('monthlyAccount'));
     }
 
     // Actualizar una contabilidad.

@@ -47,7 +47,6 @@
 
                     <select name="month" id="month" class="form-select" required>
                         <option value="">Seleccionar mes</option>
-
                         @foreach ([
                             1 => 'Enero',
                             2 => 'Febrero',
@@ -62,12 +61,9 @@
                             11 => 'Noviembre',
                             12 => 'Diciembre'
                         ] as $number => $name)
-
                             <option value="{{ $number }}"
-                                @selected($number == now()->month)>
-                                {{ $name }}
+                                @selected($number == now()->month)>{{ $name }}
                             </option>
-
                         @endforeach
                     </select>
                 </div>
@@ -124,13 +120,14 @@
 
             <div class="card-footer d-flex justify-content-end gap-2">
 
-            <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary"> <i class="ti ti-arrow-left me-1"></i>
-                Cancelar
-            </a>
+                <a href="{{ route('dashboard') }}" class="btn btn-outline-secondary"> <i class="ti ti-arrow-left me-1"></i>
+                    Cancelar
+                </a>
 
-            <button type="submit" class="btn btn-primary"><i class="ti ti-device-floppy me-1"></i>
-                Guardar registro
-            </button>
+                <button type="submit" class="btn btn-primary"><i class="ti ti-device-floppy me-1"></i>
+                    Guardar registro
+                </button>
+            </div>
 
         </form>
 

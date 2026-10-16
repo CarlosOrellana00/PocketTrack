@@ -23,3 +23,15 @@ Route::get('/registros/{monthlyAccount}', [MonthlyAccountController::class, 'sho
 // Guardar un gasto dentro de un registro mensual
 Route::post('/registros/{monthlyAccount}/gastos',[ExpenseController::class, 'storeMonthly'])
     ->whereNumber('monthlyAccount')->name('monthly-accounts.expenses.store');
+
+// Mostrar formulario de edición.
+Route::get('/registros/{monthlyAccount}/editar',
+    [MonthlyAccountController::class, 'edit'])->name('monthly-accounts.edit');
+
+// Guardar cambios de un registro mensual.
+Route::put('/registros/{monthlyAccount}',
+    [MonthlyAccountController::class, 'update'])->name('monthly-accounts.update');
+
+// Eliminar un registro mensual.
+Route::delete('/registros/{monthlyAccount}',
+    [MonthlyAccountController::class, 'destroy'])->name('monthly-accounts.destroy');

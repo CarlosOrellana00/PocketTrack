@@ -47,18 +47,29 @@
 
             <div class="row g-3">
 
+                
+                {{-- Mes: solo lectura --}}
                 <div class="col-md-6">
                     <strong>Mes:</strong>
-                    <p>{{ $monthlyAccount->month }}</p>
+                    <p>
+                        {{ [
+                            1 => 'Enero', 2 => 'Febrero', 3 => 'Marzo',
+                            4 => 'Abril', 5 => 'Mayo', 6 => 'Junio',
+                            7 => 'Julio', 8 => 'Agosto', 9 => 'Septiembre',
+                            10 => 'Octubre', 11 => 'Noviembre', 12 => 'Diciembre'
+                        ][(int) $monthlyAccount->month] ?? 'Mes no definido' }}
+                    </p>
                 </div>
 
+                {{-- Año: solo lectura --}}
                 <div class="col-md-6">
                     <strong>Año:</strong>
                     <p>{{ $monthlyAccount->year }}</p>
                 </div>
 
+                {{-- Ingreso mensual: solo lectura --}}
                 <div class="col-md-12">
-                    <strong>Ingreso mensual:</strong>
+                    <strong>Ingreso mensual (CLP):</strong>
                     <h4 class="text-success">
                         ${{ number_format($monthlyAccount->income, 0, ',', '.') }}
                     </h4>
@@ -238,33 +249,6 @@
             <p class="text-secondary mb-4">
                 Registra un nuevo gasto en este documento mensual.
             </p>
-
-            {{-- Mostrar errores de validación del formulario --}}
-
-
-        <!--errores de formulario  -->
-        <!-- @if ($errors->any())
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-
-                <div class="d-flex align-items-center mb-2">
-                    <i class="ti ti-alert-circle me-2"></i>
-                    <strong>No se pudo registrar el gasto.</strong>
-                </div>
-
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="alert"
-                        aria-label="Cerrar">
-                </button>
-
-            </div>
-         @endif -->
 
             <form id="expenseForm" action="{{ route('monthly-accounts.expenses.store', ['monthlyAccount' => $monthlyAccount->id]) }}" method="POST">
             @csrf
