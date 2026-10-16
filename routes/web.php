@@ -35,3 +35,8 @@ Route::put('/registros/{monthlyAccount}',
 // Eliminar un registro mensual.
 Route::delete('/registros/{monthlyAccount}',
     [MonthlyAccountController::class, 'destroy'])->name('monthly-accounts.destroy');
+
+// Editar un registro de gasto
+Route::put(
+    '/registros/{monthlyAccount}/gastos/{monthlyExpenseItem}',[ExpenseController::class, 'updateMonthly']
+)->name('monthly-expenses.update');

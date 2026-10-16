@@ -202,4 +202,60 @@ class ExpenseController extends Controller
                 'Gasto agregado correctamente al registro mensual.'
             );
     }
+
+    
+    /**
+     * Actualizar un movimiento dentro de un registro mensual.
+     */
+    public function updateMonthly(
+        Request $request,
+        MonthlyAccount $monthlyAccount,
+        MonthlyExpenseItem $monthlyExpenseItem
+    ): RedirectResponse {
+
+        // Comprobar que el gasto pertenece al registro mensual.
+        abort_unless(
+            $monthlyExpenseItem->monthly_account_id === $monthlyAccount->id,
+            404
+        );
+
+        // Validar los datos recibidos desde el modal.
+        $data = $request->validate([
+            'category_id' => [
+                'required',
+                'integer',
+                Rule::exists('categories', 'id'),
+            ],
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+            ],
+            'amount' => [
+                'required',
+                'numeric',
+                'min:0.01',
+            ],
+            'expense_date' => [
+                'nullable',
+                'date',
+            ],
+            'description' => [
+                'nullable',
+                'string',
+            ],
+        ]);
+
+        // Actualizar únicamente el movimiento seleccionado.
+        $monthlyExpenseItem->update($data);
+
+        // Regresar al registro mensual.
+        return redirect()
+            ->route('monthly-accounts.show', $monthlyAccount)
+            ->with(
+                'success',
+                'Gasto actualizado correctamente.'
+            );
+    }
+
 }
