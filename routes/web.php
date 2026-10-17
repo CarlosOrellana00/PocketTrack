@@ -40,3 +40,8 @@ Route::delete('/registros/{monthlyAccount}',
 Route::put(
     '/registros/{monthlyAccount}/gastos/{monthlyExpenseItem}',[ExpenseController::class, 'updateMonthly']
 )->name('monthly-expenses.update');
+
+// Eliminar únicamente un gasto de un registro mensual.
+Route::delete(
+    '/registros/{monthlyAccount}/gastos/{monthlyExpenseItem}',
+    [ExpenseController::class, 'destroyMonthly'])->whereNumber('monthlyAccount')->whereNumber('monthlyExpenseItem')->name('monthly-expenses.destroy');

@@ -211,7 +211,8 @@
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                     No, cancelar
                                 </button>
-                                <form id="formEliminarGasto" method="POST">
+                                <!-- <form id="formEliminarGasto" method="POST" action="" onsubmit="return this.action !== window.location.href && this.dataset.ready === 'true';">     -->
+                                <form id="formEliminarGasto" method="POST" action="">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger">
@@ -463,8 +464,60 @@ document.addEventListener('DOMContentLoaded', function () {
             boton.getAttribute('data-gasto-descripcion') ?? '';
 
     });
-
 });
+
+
+/**
+ * Configurar el modal para eliminar un gasto individual.
+ */
+document.addEventListener('DOMContentLoaded', function () {
+
+    const modalEliminar = document.getElementById('modalEliminarGasto');
+    const formularioEliminar = document.getElementById('formEliminarGasto');
+    const nombreEliminar = document.getElementById('nombreGastoEliminar');
+
+    if (!modalEliminar || !formularioEliminar) {
+        return;
+    }
+
+    // Impedir cualquier envío sin una ruta validada.
+    formularioEliminar.addEventListener('submit', function (event) {
+        if (formularioEliminar.dataset.ready !== 'true') {
+            event.preventDefault();
+        }
+    });
+
+    modalEliminar.addEventListener('show.bs.modal', function (event) {
+
+        const boton = event.relatedTarget;
+
+        formularioEliminar.removeAttribute('action');
+        formularioEliminar.dataset.ready = 'false';
+
+        if (!boton) {
+            return;
+        }
+
+        const gastoId = boton.getAttribute('data-gasto-id');
+        const gastoNombre = boton.getAttribute('data-gasto-nombre');
+
+        if (nombreEliminar) {
+            nombreEliminar.textContent = gastoNombre || 'este gasto';
+        }
+
+        if (!gastoId || !/^\d+$/.test(gastoId)) {
+            return;
+        }
+
+        const rutaBase = @json(url('/registros/' . $monthlyAccount->id . '/gastos'));
+
+        formularioEliminar.action =
+            rutaBase + '/' + encodeURIComponent(gastoId);
+
+        formularioEliminar.dataset.ready = 'true';
+    });
+});
+
 </script>
 
 @endsection

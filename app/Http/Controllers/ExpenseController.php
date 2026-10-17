@@ -258,4 +258,32 @@ class ExpenseController extends Controller
             );
     }
 
+    /**
+     * Eliminar un gasto individual de una contabilidad mensual.
+     */
+    public function destroyMonthly(
+        MonthlyAccount $monthlyAccount,
+        MonthlyExpenseItem $monthlyExpenseItem
+    ): RedirectResponse {
+
+        // Verificar que el gasto pertenezca al registro mensual.
+        abort_unless(
+            $monthlyExpenseItem->monthly_account_id === $monthlyAccount->id,
+            404
+        );
+
+        // Eliminar únicamente el gasto seleccionado.
+        $monthlyExpenseItem->delete();
+
+        // Regresar a la misma contabilidad mensual.
+        return redirect()
+            ->route('monthly-accounts.show', $monthlyAccount)
+            ->with(
+                'success',
+                'Gasto eliminado correctamente del registro mensual.'
+            );
+    }
+
+
+
 }
