@@ -117,7 +117,7 @@
                         <!-- Acciones -->
                         <td class="text-center">
                             <div class="d-flex justify-content-center gap-2">
-                                <a href="{{ route('monthly-accounts.edit', $account->id) }}" class="btn btn-sm btn-outline-light" title="Editar registro" aria-label="Editar registro">
+                                <a href="{{ route('monthly-accounts.show', $account->id) }}" class="btn btn-sm btn-outline-light" title="Ver y editar registro" aria-label="Ver y editar registro">
                                     <i class="ti ti-edit"></i>
                                 </a>
                                 <button class="btn btn-sm btn-outline-danger" title="Exportar PDF" disabled>
