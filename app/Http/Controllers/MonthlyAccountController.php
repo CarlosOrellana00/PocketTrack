@@ -7,6 +7,8 @@ use App\Models\MonthlyAccount;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\View\View;
 use App\Models\Category;
+use App\Models\Expense;
+use App\Models\MonthlyExpenseItem;
 
 class MonthlyAccountController extends Controller
 {
@@ -41,40 +43,69 @@ class MonthlyAccountController extends Controller
     }
 
     // Guardar una nueva contabilidad.
-    public function store(Request $request): RedirectResponse
-    {
-        $data = $request->validate([
-            'year' => ['required', 'integer', 'between:2000,2100'],
-            'month' => ['required', 'integer', 'between:1,12'],
-            'income' => ['required', 'numeric', 'min:0'],
-            'period_start' => ['nullable', 'date'],
-            'period_end' => [
-                'nullable',
-                'date',
-                'after_or_equal:period_start',
-            ],
-            'notes' => ['nullable', 'string'],
-        ]);
+    
+public function store(Request $request): RedirectResponse
+{
+    // 1. Validar los datos del registro mensual.
+    $data = $request->validate([
+        'year' => ['required', 'integer', 'between:2000,2100'],
+        'month' => ['required', 'integer', 'between:1,12'],
+        'income' => ['required', 'numeric', 'min:0'],
+        'period_start' => ['nullable', 'date'],
+        'period_end' => [
+            'nullable',
+            'date',
+            'after_or_equal:period_start',
+        ],
+        'notes' => ['nullable', 'string'],
+    ]);
 
-        // Evitar dos contabilidades para el mismo mes.
-        $exists = MonthlyAccount::where('year', $data['year'])
-            ->where('month', $data['month'])
-            ->exists();
+    // 2. Comprobar que no exista otro registro del mismo mes y año.
+    $exists = MonthlyAccount::where('year', $data['year'])
+        ->where('month', $data['month'])
+        ->exists();
 
-        if ($exists) {
-            return back()
-                ->withInput()
-                ->withErrors([
-                    'month' => 'Ya existe una contabilidad para este mes y año.',
-                ]);
-        }
+    if ($exists) {
+        return back()
+            ->withInput()
+            ->withErrors([
+                'month' => 'Ya existe una contabilidad para este mes y año.',
+            ]);
+    }
 
+    // 3. Crear el registro mensual y precargar sus gastos.
+    $monthlyAccount = DB::transaction(function () use ($data) {
+
+        // Crear el documento mensual.
         $monthlyAccount = MonthlyAccount::create($data);
 
-        return redirect()
-            ->route('monthly-accounts.show', $monthlyAccount)
-            ->with('success', 'Contabilidad creada correctamente.');
-    }
+        // Buscar gastos permanentes y activos del catálogo.
+        $expenses = Expense::where('is_permanent', true)
+            ->where('is_active', true)
+            ->get();
+
+        // Incorporar los gastos al nuevo registro.
+        foreach ($expenses as $expense) {
+
+            MonthlyExpenseItem::create([
+                'monthly_account_id' => $monthlyAccount->id,
+                'expense_id' => $expense->id,
+                'category_id' => $expense->category_id,
+                'name' => $expense->name,
+                'amount' => null,
+                'expense_date' => null,
+                'description' => $expense->description,
+            ]);
+        }
+
+        return $monthlyAccount;
+    });
+
+    // 4. Redirigir al registro mensual creado.
+    return redirect()
+        ->route('monthly-accounts.show', $monthlyAccount)
+        ->with('success', 'Contabilidad creada correctamente.');
+}
 
     // Mostrar el documento mensual.
     public function show(MonthlyAccount $monthlyAccount): View

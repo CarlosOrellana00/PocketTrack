@@ -232,9 +232,9 @@ class ExpenseController extends Controller
                 'max:100',
             ],
             'amount' => [
-                'required',
+                'nullable',
                 'numeric',
-                'min:0.01',
+                'min:0',
             ],
             'expense_date' => [
                 'nullable',
@@ -245,8 +245,10 @@ class ExpenseController extends Controller
                 'string',
             ],
         ]);
-
         // Actualizar únicamente el movimiento seleccionado.
+        // Si el monto está vacío, se guarda como NULL.
+        $data['amount'] = $data['amount'] ?? null;
+
         $monthlyExpenseItem->update($data);
 
         // Regresar al registro mensual.

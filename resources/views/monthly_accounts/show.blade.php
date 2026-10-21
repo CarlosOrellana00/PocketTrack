@@ -203,9 +203,21 @@
                     </p>
                 </div>
             @else
+                @php
+                // Gastos que ya tienen un monto registrado.
+                $gastosRegistrados = $monthlyAccount->expenseItems
+                    ->whereNotNull('amount')
+                    ->count();
+
+                // Gastos precargados que todavía no tienen monto.
+                $gastosPendientes = $monthlyAccount->expenseItems
+                    ->whereNull('amount')
+                    ->count();
+                @endphp
+
                 <p class="text-muted mb-3">
-                    Hay {{ $monthlyAccount->expenseItems->count() }}
-                    gastos registrados.
+                    Gastos registrados: {{ $gastosRegistrados }}
+                    | Gastos pendientes: {{ $gastosPendientes }}
                 </p>
                 @foreach ($gastosPorCategoria as $categoryId => $gastos)
                     @php
@@ -245,8 +257,20 @@
                                             <td>
                                                 {{ $gasto->description ?: 'Sin descripción' }}
                                             </td>
-                                            <td class="text-end fw-semibold">
+                                            <!-- <td class="text-end fw-semibold">
                                                 ${{ number_format($gasto->amount, 0, ',', '.') }}
+                                            </td> -->
+                                            <td class="text-end fw-semibold">
+                                                @if (is_null($gasto->amount))
+                                                    <span class="text-secondary">
+                                                        $0
+                                                    </span>
+                                                    <span class="badge bg-secondary-lt ms-2">
+                                                        Pendiente
+                                                    </span>
+                                                @else
+                                                    ${{ number_format($gasto->amount, 0, ',', '.') }}
+                                                @endif
                                             </td>
                                             {{-- Acciones del gasto --}}
                                             <td class="text-end">
@@ -267,7 +291,7 @@
                                                     <!-- Botón para solicitar eliminación -->
                                                     <button type="button" class="btn btn-outline-danger btn-icon"
                                                         title="Eliminar gasto" data-bs-toggle="modal" data-bs-target="#modalEliminarGasto"
-                                                        data-gasto-id="{{ $gasto->id }}" data-gasto-nombre="{{ $gasto->expense->name ?? 'este gasto' }}">
+                                                        data-gasto-id="{{ $gasto->id }}" data-gasto-nombre="{{ $gasto->name }}">
                                                         <i class="ti ti-trash"></i>
                                                     </button>
                                                 </div>
@@ -363,7 +387,13 @@
                                         <div class="input-group">
                                             <span class="input-group-text">$</span>
 
-                                            <input type="number" class="form-control" id="editarMonto" name="amount" min="0.01" step="0.01" required>
+                                            <!-- <input type="number" class="form-control" id="editarMonto" name="amount" min="0.01" step="0.01" required> -->
+                                            
+                                            <input type="number" class="form-control" id="editarMonto" name="amount" min="0" step="0.01" placeholder="Ingrese el monto en CLP">
+                                            <small class="form-hint">
+                                                Deja el campo vacío si el gasto todavía está pendiente.
+                                            </small>
+
                                         </div>
                                     </div>
                                     {{-- Fecha --}}
