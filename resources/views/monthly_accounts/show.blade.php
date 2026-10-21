@@ -30,11 +30,16 @@
     {{-- Datos principales --}}
     <div class="card mb-4">
 
-        <div class="card-header">
-            <h5 class="card-title mb-0">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h3 class="card-title mb-0">
                 <i class="ti ti-calendar-month me-2"></i>
                 Datos del registro
-            </h5>
+            </h3>
+
+            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditarRegistro" title="Editar datos del registro">
+                <i class="ti ti-edit me-1"></i>
+                Editar registro
+            </button>
         </div>
         <div class="card-body">
             <div class="row g-3">
@@ -83,6 +88,94 @@
             </div>
         </div>
     </div>
+
+    {{-- Modal para editar los datos del registro mensual --}}
+    <div class="modal fade" id="modalEditarRegistro" tabindex="-1" aria-labelledby="tituloModalEditarRegistro" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <form action="{{ route('monthly-accounts.update', $monthlyAccount->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tituloModalEditarRegistro">
+                            <i class="ti ti-edit me-2"></i>
+                            Editar registro mensual
+                        </h5>
+                        <button type="button" class="btn-close"
+                                data-bs-dismiss="modal" aria-label="Cerrar">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            {{-- Mes --}}
+                            <div class="col-md-6">
+                                <label for="registroMes" class="form-label">Mes</label>
+                                <select name="month" id="registroMes" class="form-select" required>
+                                    @foreach ([
+                                        1 => 'Enero', 2 => 'Febrero',
+                                        3 => 'Marzo', 4 => 'Abril',
+                                        5 => 'Mayo', 6 => 'Junio',
+                                        7 => 'Julio', 8 => 'Agosto',
+                                        9 => 'Septiembre', 10 => 'Octubre',
+                                        11 => 'Noviembre', 12 => 'Diciembre'
+                                    ] as $numero => $nombre)
+                                        <option value="{{ $numero }}"
+                                            @selected(old('month', $monthlyAccount->month) == $numero)>
+                                            {{ $nombre }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            {{-- Año --}}
+                            <div class="col-md-6">
+                                <label for="registroAnio" class="form-label">Año</label>
+                                <input type="number" name="year" id="registroAnio" class="form-control" value="{{ old('year', $monthlyAccount->year) }}" min="2000" max="2100" required>
+                            </div>
+                            {{-- Ingreso mensual --}}
+                            <div class="col-12">
+                                <label for="registroIngreso" class="form-label">
+                                    Ingreso mensual (CLP)
+                                </label>
+                                <input type="number" name="income" id="registroIngreso" class="form-control" value="{{ old('income', $monthlyAccount->income) }}" min="0" step="0.01" required>
+                            </div>
+                            {{-- Inicio del período --}}
+                            <div class="col-md-6">
+                                <label for="registroInicio" class="form-label">
+                                    Inicio del período
+                                </label>
+                                <input type="date" name="period_start" id="registroInicio" class="form-control" value="{{ old('period_start', $monthlyAccount->period_start?->format('Y-m-d')) }}" required>
+                            </div>
+                            {{-- Fin del período --}}
+                            <div class="col-md-6">
+                                <label for="registroFin" class="form-label">
+                                    Fin del período
+                                </label>
+                                <input type="date" name="period_end" id="registroFin" class="form-control" value="{{ old('period_end', $monthlyAccount->period_end?->format('Y-m-d')) }}" required>
+                            </div>
+                            {{-- Observaciones --}}
+                            <div class="col-12">
+                                <label for="registroNotas" class="form-label">
+                                    Observaciones
+                                </label>
+                                <textarea name="notes" id="registroNotas" class="form-control" rows="3">{{ old('notes', $monthlyAccount->notes) }}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary"
+                                data-bs-dismiss="modal">
+                            Cancelar
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ti ti-device-floppy me-1"></i>
+                            Guardar cambios
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     {{-- Gastos del registro --}}
     <div class="card mb-4">
         <div class="card-header">
