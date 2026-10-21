@@ -6,42 +6,50 @@ use App\Http\Controllers\MonthlyAccountController;
 use App\Http\Controllers\ExpenseController;
 
 
+// Página principal de PocketTrack.
 Route::get('/', [DashboardController::class, 'index'])
     ->name('dashboard');
 
-//Registro Mensual
+/*
+|--------------------------------------------------------------------------
+| REGISTROS MENSUALES
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/registros/crear', [MonthlyAccountController::class, 'create'])
-    ->name('monthly-accounts.create');
+// Mostrar formulario para crear un registro mensual.
+Route::get('/registros/crear', [MonthlyAccountController::class, 'create'])->name('monthly-accounts.create');
 
-Route::post('/registros', [MonthlyAccountController::class, 'store'])
-    ->name('monthly-accounts.store');
+// Guardar un nuevo registro mensual.
+Route::post('/registros', [MonthlyAccountController::class, 'store'])->name('monthly-accounts.store');
 
-Route::get('/registros/{monthlyAccount}', [MonthlyAccountController::class, 'show'])
-    ->whereNumber('monthlyAccount')->name('monthly-accounts.show');
+// Mostrar un registro mensual completo.
+Route::get('/registros/{monthlyAccount}', [MonthlyAccountController::class, 'show'])->whereNumber('monthlyAccount')->name('monthly-accounts.show');
 
-// Guardar un gasto dentro de un registro mensual
-Route::post('/registros/{monthlyAccount}/gastos',[ExpenseController::class, 'storeMonthly'])
-    ->whereNumber('monthlyAccount')->name('monthly-accounts.expenses.store');
+// Mostrar formulario de edición de un registro mensual.
+// Se conserva mientras implementamos el nuevo modal.
+Route::get('/registros/{monthlyAccount}/editar', [MonthlyAccountController::class, 'edit'])->whereNumber('monthlyAccount')->name('monthly-accounts.edit');
 
-// Mostrar formulario de edición.
-Route::get('/registros/{monthlyAccount}/editar',
-    [MonthlyAccountController::class, 'edit'])->name('monthly-accounts.edit');
+// Actualizar los datos generales de un registro mensual.
+// Esta ruta será utilizada por el nuevo modal de edición.
+Route::put('/registros/{monthlyAccount}', [MonthlyAccountController::class, 'update'])->whereNumber('monthlyAccount')->name('monthly-accounts.update');
 
-// Guardar cambios de un registro mensual.
-Route::put('/registros/{monthlyAccount}',
-    [MonthlyAccountController::class, 'update'])->name('monthly-accounts.update');
+// Eliminar un registro mensual completo.
+// IMPORTANTE: No utilizar esta ruta para eliminar gastos individuales.
+Route::delete('/registros/{monthlyAccount}', [MonthlyAccountController::class, 'destroy'])->whereNumber('monthlyAccount')->name('monthly-accounts.destroy');
 
-// Eliminar un registro mensual.
-Route::delete('/registros/{monthlyAccount}',
-    [MonthlyAccountController::class, 'destroy'])->name('monthly-accounts.destroy');
+/*
+|--------------------------------------------------------------------------
+| GASTOS DE LOS REGISTROS MENSUALES
+|--------------------------------------------------------------------------
+*/
+// Agregar un gasto a un registro mensual existente.
+Route::post('/registros/{monthlyAccount}/gastos', [ExpenseController::class, 'storeMonthly'])->whereNumber('monthlyAccount')->name('monthly-accounts.expenses.store');
 
-// Editar un registro de gasto
-Route::put(
-    '/registros/{monthlyAccount}/gastos/{monthlyExpenseItem}',[ExpenseController::class, 'updateMonthly']
-)->name('monthly-expenses.update');
+// Actualizar únicamente un gasto individual.
+Route::put('/registros/{monthlyAccount}/gastos/{monthlyExpenseItem}',[ExpenseController::class, 'updateMonthly'])
+    ->whereNumber('monthlyAccount')->whereNumber('monthlyExpenseItem')->name('monthly-expenses.update');
 
-// Eliminar únicamente un gasto de un registro mensual.
-Route::delete(
-    '/registros/{monthlyAccount}/gastos/{monthlyExpenseItem}',
-    [ExpenseController::class, 'destroyMonthly'])->whereNumber('monthlyAccount')->whereNumber('monthlyExpenseItem')->name('monthly-expenses.destroy');
+// Eliminar únicamente un gasto individual.
+// No elimina el registro mensual al que pertenece.
+Route::delete('/registros/{monthlyAccount}/gastos/{monthlyExpenseItem}',[ExpenseController::class, 'destroyMonthly'])
+    ->whereNumber('monthlyAccount')->whereNumber('monthlyExpenseItem')->name('monthly-expenses.destroy');
