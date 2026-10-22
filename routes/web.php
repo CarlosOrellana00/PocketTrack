@@ -53,3 +53,14 @@ Route::put('/registros/{monthlyAccount}/gastos/{monthlyExpenseItem}',[ExpenseCon
 // No elimina el registro mensual al que pertenece.
 Route::delete('/registros/{monthlyAccount}/gastos/{monthlyExpenseItem}',[ExpenseController::class, 'destroyMonthly'])
     ->whereNumber('monthlyAccount')->whereNumber('monthlyExpenseItem')->name('monthly-expenses.destroy');
+
+/*
+|--------------------------------------------------------------------------
+| CATÁLOGO DE GASTOS
+|--------------------------------------------------------------------------
+| Administración de gastos reutilizables y permanentes.
+| Esta sección es independiente de los registros mensuales.
+|--------------------------------------------------------------------------
+*/
+
+Route::resource('expenses', ExpenseController::class);

@@ -62,22 +62,19 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link d-flex align-items-center gap-3 py-3"
-                            href="{{ route('monthly-accounts.create') }}">
-
+                            <a class="nav-link d-flex align-items-center gap-3 py-3" href="{{ route('monthly-accounts.create') }}">
                                 <span class="nav-link-icon">
                                     <i class="ti ti-circle-plus fs-2"></i>
                                 </span>
-
                                 <span class="nav-link-title">
                                     Agregar Registro Gasto
                                 </span>
-
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <span class="nav-link d-flex align-items-center gap-3 py-3 text-secondary">
+                            <a class="nav-link d-flex align-items-center gap-3 py-3 {{ request()->routeIs('expenses.*') ? 'active' : '' }}"
+                            href="{{ route('expenses.index') }}">
 
                                 <span class="nav-link-icon">
                                     <i class="ti ti-list-details fs-2"></i>
@@ -85,11 +82,9 @@
 
                                 <span class="nav-link-title">
                                     Catálogo de gastos
-                                    <small class="d-block text-secondary">
-                                        Próximamente
-                                    </small>
                                 </span>
-                            </span>
+
+                            </a>
                         </li>
 
                         <li class="nav-item">
