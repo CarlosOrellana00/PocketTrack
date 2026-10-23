@@ -107,11 +107,28 @@ class ExpenseController extends Controller
      */
     public function destroy(Expense $expense): RedirectResponse
     {
+        // Comprobar si el gasto está asociado
+        // a algún registro mensual.
+        if ($expense->monthlyExpenseItems()->exists()) {
+            return redirect()
+                ->route('expenses.index')
+                ->with(
+                    'error',
+                    'No se puede eliminar este gasto porque está '
+                    . 'asociado a registros mensuales. '
+                    . 'Puedes desactivarlo desde la opción de edición.'
+                );
+        }
+
+        // Eliminar únicamente si no tiene movimientos asociados.
         $expense->delete();
 
         return redirect()
             ->route('expenses.index')
-            ->with('success', 'Gasto eliminado correctamente.');
+            ->with(
+                'success',
+                'Gasto eliminado correctamente.'
+            );
     }
 
     /**
