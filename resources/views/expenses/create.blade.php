@@ -34,8 +34,9 @@
     <div class="card">
         <div class="card-header">
             <h3 class="card-title">Información del gasto</h3>
-        </div>
-        <form action="{{ route('expenses.store') }}" method="POST">
+        </div>        
+        <form action="{{ route('expenses.store') }}" method="POST" id="formCrearGasto">
+    
             @csrf
             <div class="card-body">
                 <div class="row g-3">
@@ -107,13 +108,43 @@
                 <a href="{{ route('expenses.index') }}" class="btn btn-outline-secondary me-2">
                     Cancelar
                 </a>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary" id="btnGuardarGasto">
                     <i class="ti ti-device-floppy me-2"></i>
                     Guardar gasto
                 </button>
             </div>
         </form>
     </div>
-
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const formulario = document.getElementById('formCrearGasto');
+        const botonGuardar = document.getElementById('btnGuardarGasto');
+
+        let enviando = false;
+
+        formulario.addEventListener('submit', function (event) {
+            if (enviando) {
+                event.preventDefault();
+                return;
+            }
+
+            if (!formulario.checkValidity()) {
+                return;
+            }
+
+            enviando = true;
+
+            botonGuardar.classList.add('disabled');
+            botonGuardar.setAttribute('aria-disabled', 'true');
+            botonGuardar.innerHTML = `
+                <span class="spinner-border spinner-border-sm me-2"
+                    aria-hidden="true"></span>
+                Guardando...
+            `;
+        });
+    });
+</script>
+
 @endsection
