@@ -111,22 +111,27 @@ public function store(Request $request): RedirectResponse
     // Mostrar el documento mensual.
     public function show(MonthlyAccount $monthlyAccount): View
     {
-        // Cargar los gastos asociados al registro mensual
-        // junto con sus categorías y gastos de catálogo.
-        $monthlyAccount->load([
-            'expenseItems.category',
-            'expenseItems.expense',
-        ]);
-
-        // Obtener las categorías registradas en la base de datos.
-        $categories = Category::orderBy('name')->get();
-
+        // Cargar los gastos asociados al registro mensual,
+        // junto con sus categorías y gastos del catálogo.
+        $monthlyAccount->load(['expenseItems.category','expenseItems.expense',]);
+        // Orden personalizado de las categorías.
+        $categoryOrder = [
+            'Fijo',
+            'Deuda',
+            'Ahorro',
+            'Personal',
+            'Gusto',
+            'Imprevisto',
+            'Circunstancial',];
+        // Obtener las categorías y ordenarlas según nuestra lista.
+        $categories = Category::all()
+            ->sortBy(function ($category) use ($categoryOrder) {
+                $position = array_search($category->name, $categoryOrder, true);
+                return $position === false ? 999 : $position;})->values();
         // Enviar el registro mensual y las categorías a la vista.
-        return view(
-            'monthly_accounts.show',
-            compact('monthlyAccount', 'categories')
-        );
+        return view('monthly_accounts.show',compact('monthlyAccount', 'categories'));
     }
+
 
     // Mostrar el formulario de edición.
     public function edit(MonthlyAccount $monthlyAccount): View
