@@ -177,13 +177,21 @@
     </div>
 
     {{-- Gastos del registro --}}
-    <div class="card mb-4">
+    <div class="card mb-4">        
         <div class="card-header">
-            <h5 class="card-title mb-0">
-                <i class="ti ti-receipt me-2"></i>
-                Gastos del registro
-            </h5>
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <h5 class="card-title mb-0"><i class="ti ti-receipt me-2"></i>
+                    Gastos del registro
+                </h5>
+                @if(is_null($monthlyAccount->closed_at) && $monthlyAccount->expenseItems->isNotEmpty())
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalVaciarRegistro">
+                        <i class="ti ti-trash me-1"></i>
+                        Vaciar registro
+                    </button>
+                @endif
+            </div>
         </div>
+
         <div class="card-body">
             @php
                 // Definir el orden de las categorías.
@@ -451,6 +459,69 @@
         </div>
     </div>
     {{-- Sección de próximos desarrollos --}}
+    {{-- Modal de confirmación para vaciar registro --}}
+    <div class="modal fade" id="modalVaciarRegistro"
+        tabindex="-1"
+        aria-labelledby="tituloModalVaciarRegistro"
+        aria-hidden="true">
+
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="tituloModalVaciarRegistro">
+                        <i class="ti ti-alert-triangle text-danger me-2"></i>
+                        Vaciar registro mensual
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Cerrar">
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <p>
+                        ¿Estás seguro de que deseas eliminar
+                        <strong>todos los gastos de este registro mensual</strong>?
+                    </p>
+
+                    <p class="text-danger mb-0">
+                        Esta acción no se puede deshacer.
+                        Se eliminarán también los gastos permanentes
+                        precargados en este registro.
+                    </p>
+
+                    <p class="text-muted mt-3 mb-0">
+                        El documento mensual y el catálogo general
+                        de gastos se conservarán.
+                    </p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+
+                    <form action="{{ route('monthly-accounts.clear', $monthlyAccount) }}"
+                        method="POST">
+                        @csrf
+                        @method('DELETE')
+
+                        <button type="submit" class="btn btn-danger">
+                            <i class="ti ti-trash me-1"></i>
+                            Sí, vaciar registro
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 {{-- Formulario para agregar gastos --}}
 <div class="card mt-3">
     <div class="card-header">

@@ -37,6 +37,10 @@ Route::put('/registros/{monthlyAccount}', [MonthlyAccountController::class, 'upd
 // IMPORTANTE: No utilizar esta ruta para eliminar gastos individuales.
 Route::delete('/registros/{monthlyAccount}', [MonthlyAccountController::class, 'destroy'])->whereNumber('monthlyAccount')->name('monthly-accounts.destroy');
 
+// Vaciar un Registro 
+// Vacia el contenido de un registor ya creado.
+Route::delete('/registros/{monthlyAccount}/vaciar',[MonthlyAccountController::class, 'clear'])->name('monthly-accounts.clear');
+
 /*
 |--------------------------------------------------------------------------
 | GASTOS DE LOS REGISTROS MENSUALES
@@ -53,13 +57,6 @@ Route::put('/registros/{monthlyAccount}/gastos/{monthlyExpenseItem}',[ExpenseCon
 // No elimina el registro mensual al que pertenece.
 Route::delete('/registros/{monthlyAccount}/gastos/{monthlyExpenseItem}',[ExpenseController::class, 'destroyMonthly'])
     ->whereNumber('monthlyAccount')->whereNumber('monthlyExpenseItem')->name('monthly-expenses.destroy');
-
-// Vaciar un Registro 
-// Vacia el contenido de un registor ya creado.
-Route::delete(
-    '/registros/{monthlyAccount}/vaciar',
-    [MonthlyAccountController::class, 'clear']
-)->name('monthly-accounts.clear');
 
 /*
 |--------------------------------------------------------------------------
