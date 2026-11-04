@@ -186,9 +186,24 @@
         </div>
         <div class="card-body">
             @php
-                // Agrupar los gastos por categoría.
+                // Definir el orden de las categorías.
+                $ordenCategorias = [
+                    'Fijo' => 1,
+                    'Deuda' => 2,
+                    'Ahorro' => 3,
+                    'Personal' => 4,
+                    'Gusto' => 5,
+                    'Imprevisto' => 6,
+                    'Circunstancial' => 7,];
+
+                // Agrupar y ordenar los gastos por categoría.
                 $gastosPorCategoria = $monthlyAccount->expenseItems
-                    ->groupBy('category_id');
+                    ->groupBy('category_id')
+                    ->sortBy(function ($gastos) use ($ordenCategorias) {
+                        $nombreCategoria = $gastos->first()?->category?->name;
+
+                        return $ordenCategorias[$nombreCategoria] ?? 999;
+                    });
 
                 // Calcular el total general de gastos.
                 $totalGastos = $monthlyAccount->expenseItems->sum('amount');
