@@ -24,6 +24,7 @@ class MonthlyAccount extends Model
             'income' => 'decimal:2',
             'period_start' => 'date',
             'period_end' => 'date',
+            'closed_at' => 'datetime',
         ];
     }
 

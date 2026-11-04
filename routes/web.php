@@ -54,6 +54,13 @@ Route::put('/registros/{monthlyAccount}/gastos/{monthlyExpenseItem}',[ExpenseCon
 Route::delete('/registros/{monthlyAccount}/gastos/{monthlyExpenseItem}',[ExpenseController::class, 'destroyMonthly'])
     ->whereNumber('monthlyAccount')->whereNumber('monthlyExpenseItem')->name('monthly-expenses.destroy');
 
+// Vaciar un Registro 
+// Vacia el contenido de un registor ya creado.
+Route::delete(
+    '/registros/{monthlyAccount}/vaciar',
+    [MonthlyAccountController::class, 'clear']
+)->name('monthly-accounts.clear');
+
 /*
 |--------------------------------------------------------------------------
 | CATÁLOGO DE GASTOS
@@ -64,3 +71,4 @@ Route::delete('/registros/{monthlyAccount}/gastos/{monthlyExpenseItem}',[Expense
 */
 
 Route::resource('expenses', ExpenseController::class);
+

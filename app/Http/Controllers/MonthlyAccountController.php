@@ -178,6 +178,34 @@ public function store(Request $request): RedirectResponse
             ->with('success', 'Contabilidad actualizada correctamente.');
     }
 
+    /**
+     * Vaciar todos los gastos de un registro mensual.
+     * Conserva el documento y el catálogo general.
+     */
+    public function clear(
+        MonthlyAccount $monthlyAccount
+    ): RedirectResponse {
+
+        // Impedir modificaciones si el documento está cerrado.
+        abort_if(
+            $monthlyAccount->closed_at !== null,
+            403,
+            'No se puede vaciar una contabilidad cerrada.'
+        );
+
+        // Eliminar únicamente los movimientos de este registro.
+        $monthlyAccount->expenseItems()->delete();
+
+        // Volver al documento mensual.
+        return redirect()
+            ->route('monthly-accounts.show', $monthlyAccount)
+            ->with(
+                'success',
+                'Todos los gastos del registro fueron eliminados correctamente.'
+            );
+    }
+
+
     // Eliminar una contabilidad mensual.
     public function destroy(
         MonthlyAccount $monthlyAccount
