@@ -597,22 +597,16 @@
         </div>
     </div>
 
-
-
-
 {{-- Formulario para agregar gastos --}}
+@if (is_null($monthlyAccount->closed_at))
 <div class="card mt-3">
-    @if (is_null($monthlyAccount->closed_at))
         <div class="card-header">
             <h3 class="card-title">
                 <i class="ti ti-circle-plus me-2"></i>
                 Agregar gasto al registro mensual
             </h3>
         </div>
-    @endif
-
     <div class="card-body">
-
             <p class="text-secondary mb-4">
                 Registra un nuevo gasto en este documento mensual.
             </p>
@@ -711,6 +705,7 @@
         </div>
     </div>
 </div>
+@endif
 
 {{-- JavaScript del modal de edición --}}
 <script>
