@@ -300,7 +300,9 @@
                                         <th>Fecha</th>
                                         <th>Descripción</th>
                                         <th class="text-end">Monto</th>
-                                        <th class="text-end">Acciones</th>
+                                        @if (is_null($monthlyAccount->closed_at))
+                                            <th class="text-end">Acciones</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -332,6 +334,7 @@
                                                 @endif
                                             </td>
                                             {{-- Acciones del gasto --}}
+                                            @if (is_null($monthlyAccount->closed_at))
                                             <td class="text-end">
                                                 <div class="d-inline-flex align-items-center gap-2">
                                                     {{-- Editar gasto --}}
@@ -355,6 +358,7 @@
                                                     </button>
                                                 </div>
                                             </td>
+                                            @endif
                                         </tr>
                                     @endforeach
                                 </tbody>

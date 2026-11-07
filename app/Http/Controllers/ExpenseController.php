@@ -223,6 +223,9 @@ class ExpenseController extends Controller
      */
     public function updateMonthly(Request $request, MonthlyAccount $monthlyAccount, MonthlyExpenseItem $monthlyExpenseItem): RedirectResponse {
 
+        // Impedir modificar gastos de registros mensuales cerrados.
+        abort_if($monthlyAccount->closed_at !== null,403,'No se pueden modificar gastos de un registro mensual cerrado.');
+
         // Comprobar que el gasto pertenece al registro mensual.
         abort_unless(
             $monthlyExpenseItem->monthly_account_id === $monthlyAccount->id,
@@ -275,11 +278,11 @@ class ExpenseController extends Controller
      */
     public function destroyMonthly(MonthlyAccount $monthlyAccount, MonthlyExpenseItem $monthlyExpenseItem): RedirectResponse {
 
+        // Impedir eliminar gastos de registros mensuales cerrados.
+        abort_if($monthlyAccount->closed_at !== null, 403, 'No se pueden eliminar gastos de un registro mensual cerrado.');
+    
         // Verificar que el gasto pertenezca al registro mensual.
-        abort_unless(
-            $monthlyExpenseItem->monthly_account_id === $monthlyAccount->id,
-            404
-        );
+        abort_unless($monthlyExpenseItem->monthly_account_id === $monthlyAccount->id, 404);
 
         // Eliminar únicamente el gasto seleccionado.
         $monthlyExpenseItem->delete();
