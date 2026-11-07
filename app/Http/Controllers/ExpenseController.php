@@ -82,10 +82,7 @@ class ExpenseController extends Controller
     /**
      * Actualizar un gasto del catálogo.
      */
-    public function update(
-        Request $request,
-        Expense $expense
-    ): RedirectResponse {
+    public function update( Request $request, Expense $expense): RedirectResponse {
 
         $data = $request->validate([
             'category_id' => ['required', 'exists:categories,id'],
@@ -135,10 +132,10 @@ class ExpenseController extends Controller
      * NUEVA FUNCIÓN:
      * Registrar un gasto dentro de una contabilidad mensual.
      */
-    public function storeMonthly(
-        Request $request,
-        MonthlyAccount $monthlyAccount
-    ): RedirectResponse {
+    public function storeMonthly(Request $request, MonthlyAccount $monthlyAccount): RedirectResponse {
+
+        // 0. Impedir agregar gastos a un registro mensual cerrado.
+        abort_if($monthlyAccount->closed_at !== null, 403,'No se pueden agregar gastos a un registro mensual cerrado.');
 
         // 1. Validar los datos del formulario.
         $data = $request->validate([
@@ -224,11 +221,7 @@ class ExpenseController extends Controller
     /**
      * Actualizar un movimiento dentro de un registro mensual.
      */
-    public function updateMonthly(
-        Request $request,
-        MonthlyAccount $monthlyAccount,
-        MonthlyExpenseItem $monthlyExpenseItem
-    ): RedirectResponse {
+    public function updateMonthly(Request $request, MonthlyAccount $monthlyAccount, MonthlyExpenseItem $monthlyExpenseItem): RedirectResponse {
 
         // Comprobar que el gasto pertenece al registro mensual.
         abort_unless(
@@ -280,10 +273,7 @@ class ExpenseController extends Controller
     /**
      * Eliminar un gasto individual de una contabilidad mensual.
      */
-    public function destroyMonthly(
-        MonthlyAccount $monthlyAccount,
-        MonthlyExpenseItem $monthlyExpenseItem
-    ): RedirectResponse {
+    public function destroyMonthly(MonthlyAccount $monthlyAccount, MonthlyExpenseItem $monthlyExpenseItem): RedirectResponse {
 
         // Verificar que el gasto pertenezca al registro mensual.
         abort_unless(
@@ -302,7 +292,4 @@ class ExpenseController extends Controller
                 'Gasto eliminado correctamente del registro mensual.'
             );
     }
-
-
-
 }

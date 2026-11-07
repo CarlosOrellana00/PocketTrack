@@ -40,6 +40,12 @@ Route::delete('/registros/{monthlyAccount}', [MonthlyAccountController::class, '
 // Vaciar un Registro 
 // Vacia el contenido de un registor ya creado.
 Route::delete('/registros/{monthlyAccount}/vaciar',[MonthlyAccountController::class, 'clear'])->name('monthly-accounts.clear');
+ 
+// Cerrar un registro mensual.
+ // Impide futuras modificaciones del documento.
+ Route::post('/registros/{monthlyAccount}/cerrar',[MonthlyAccountController::class, 'close'])->whereNumber('monthlyAccount')->name('monthly-accounts.close');
+
+
 
 /*
 |--------------------------------------------------------------------------

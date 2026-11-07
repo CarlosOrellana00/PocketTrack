@@ -30,7 +30,7 @@
     {{-- Datos principales --}}
     <div class="card mb-4">
 
-        <div class="card-header d-flex justify-content-between align-items-center">
+        <!-- <div class="card-header d-flex justify-content-between align-items-center">
             <h3 class="card-title mb-0">
                 <i class="ti ti-calendar-month me-2"></i>
                 Datos del registro
@@ -40,7 +40,44 @@
                 <i class="ti ti-edit me-1"></i>
                 Editar registro
             </button>
+
+            @if (is_null($monthlyAccount->closed_at))
+                <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#modalCerrarRegistro"><i class="ti ti-lock me-1"></i>
+                    Cerrar registro
+                </button>
+            @else
+                <span class="badge bg-success-lt"><i class="ti ti-lock me-1"></i>
+                    Registro cerrado
+                </span>
+            @endif
+
+        </div> -->
+        
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h3 class="card-title mb-0"><i class="ti ti-calendar-month me-2"></i>
+            Datos del registro
+        </h3>
+        <div class="d-flex align-items-center gap-2">
+
+            @if (is_null($monthlyAccount->closed_at))
+                {{-- Editar registro --}}
+                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalEditarRegistro" title="Editar datos del registro">
+                    <i class="ti ti-edit me-1"></i>
+                    Editar registro
+                </button>
+                
+                <button type="button" class="btn btn-outline-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modalCerrarRegistro" title="Cerrar registro mensual">
+                    <i class="ti ti-lock me-1"></i>
+                    Cerrar registro
+                </button>
+            @else
+                <span class="badge bg-success-lt"><i class="ti ti-lock me-1"></i>
+                    Registro cerrado
+                </span>
+            @endif
         </div>
+    </div>
+
         <div class="card-body">
             <div class="row g-3">
                 {{-- Mes: solo lectura --}}
@@ -101,8 +138,7 @@
                             <i class="ti ti-edit me-2"></i>
                             Editar registro mensual
                         </h5>
-                        <button type="button" class="btn-close"
-                                data-bs-dismiss="modal" aria-label="Cerrar">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar">
                         </button>
                     </div>
                     <div class="modal-body">
@@ -521,15 +557,59 @@
             </div>
         </div>
     </div>
+    
+{{-- Modal de confirmación para cerrar registro --}}
+    <div class="modal fade" id="modalCerrarRegistro" tabindex="-1" aria-labelledby="tituloModalCerrarRegistro" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"id="tituloModalCerrarRegistro">
+                        <i class="ti ti-lock me-2 text-warning"></i>
+                        Cerrar registro mensual
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar">
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        ¿Estás seguro de que deseas cerrar este registro mensual?
+                    </p>
+                    <p class="text-warning">
+                        Una vez cerrado, no podrás agregar, editar, eliminar ni vaciar los gastos de este documento.
+                    </p>
+                    <p class="text-muted mb-0">
+                        El registro permanecerá disponible para consultas y futuras exportaciones.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <form action="{{ route('monthly-accounts.close', $monthlyAccount) }}"
+                        method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-warning"><i class="ti ti-lock me-1"></i>
+                            Sí, cerrar registro
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 
 {{-- Formulario para agregar gastos --}}
 <div class="card mt-3">
-    <div class="card-header">
-        <h3 class="card-title">
-            <i class="ti ti-circle-plus me-2"></i>
-            Agregar gasto al registro mensual
-        </h3>
-    </div>
+    @if (is_null($monthlyAccount->closed_at))
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="ti ti-circle-plus me-2"></i>
+                Agregar gasto al registro mensual
+            </h3>
+        </div>
+    @endif
 
     <div class="card-body">
 

@@ -45,68 +45,64 @@ class MonthlyAccountController extends Controller
 
     // Guardar una nueva contabilidad.
     
-public function store(Request $request): RedirectResponse
-{
-    // 1. Validar los datos del registro mensual.
-    $data = $request->validate([
-        'year' => ['required', 'integer', 'between:2000,2100'],
-        'month' => ['required', 'integer', 'between:1,12'],
-        'income' => ['required', 'numeric', 'min:0'],
-        'period_start' => ['nullable', 'date'],
-        'period_end' => [
-            'nullable',
-            'date',
-            'after_or_equal:period_start',
-        ],
-        'notes' => ['nullable', 'string'],
-    ]);
+    public function store(Request $request): RedirectResponse
+    {
+        // 1. Validar los datos del registro mensual.
+        $data = $request->validate([
+            'year' => ['required', 'integer', 'between:2000,2100'],
+            'month' => ['required', 'integer', 'between:1,12'],
+            'income' => ['required', 'numeric', 'min:0'],
+            'period_start' => ['nullable', 'date'],
+            'period_end' => [
+                'nullable',
+                'date',
+                'after_or_equal:period_start',],
+            'notes' => ['nullable', 'string'],
+        ]);
 
-    // 2. Comprobar que no exista otro registro del mismo mes y año.
-    $exists = MonthlyAccount::where('year', $data['year'])
-        ->where('month', $data['month'])
-        ->exists();
+        // 2. Comprobar que no exista otro registro del mismo mes y año.
+        $exists = MonthlyAccount::where('year', $data['year'])
+            ->where('month', $data['month'])
+            ->exists();
 
-    if ($exists) {
-        return back()
-            ->withInput()
-            ->withErrors([
-                'month' => 'Ya existe una contabilidad para este mes y año.',
-            ]);
-    }
-
-    // 3. Crear el registro mensual y precargar sus gastos.
-    $monthlyAccount = DB::transaction(function () use ($data) {
-
-        // Crear el documento mensual.
-        $monthlyAccount = MonthlyAccount::create($data);
-
-        // Buscar gastos permanentes y activos del catálogo.
-        $expenses = Expense::where('is_permanent', true)
-            ->where('is_active', true)
-            ->get();
-
-        // Incorporar los gastos al nuevo registro.
-        foreach ($expenses as $expense) {
-
-            MonthlyExpenseItem::create([
-                'monthly_account_id' => $monthlyAccount->id,
-                'expense_id' => $expense->id,
-                'category_id' => $expense->category_id,
-                'name' => $expense->name,
-                'amount' => null,
-                'expense_date' => null,
-                'description' => $expense->description,
-            ]);
+        if ($exists) {
+            return back()
+                ->withInput()
+                ->withErrors(['month' => 'Ya existe una contabilidad para este mes y año.',]);
         }
 
-        return $monthlyAccount;
-    });
+        // 3. Crear el registro mensual y precargar sus gastos.
+        $monthlyAccount = DB::transaction(function () use ($data) {
 
-    // 4. Redirigir al registro mensual creado.
-    return redirect()
-        ->route('monthly-accounts.show', $monthlyAccount)
-        ->with('success', 'Contabilidad creada correctamente.');
-}
+            // Crear el documento mensual.
+            $monthlyAccount = MonthlyAccount::create($data);
+
+            // Buscar gastos permanentes y activos del catálogo.
+            $expenses = Expense::where('is_permanent', true)
+                ->where('is_active', true)
+                ->get();
+
+            // Incorporar los gastos al nuevo registro.
+            foreach ($expenses as $expense) {
+
+                MonthlyExpenseItem::create([
+                    'monthly_account_id' => $monthlyAccount->id,
+                    'expense_id' => $expense->id,
+                    'category_id' => $expense->category_id,
+                    'name' => $expense->name,
+                    'amount' => null,
+                    'expense_date' => null,
+                    'description' => $expense->description,
+                ]);
+            }
+
+            return $monthlyAccount;
+        });
+
+        // 4. Redirigir al registro mensual creado.
+        return redirect()
+            ->route('monthly-accounts.show', $monthlyAccount)->with('success', 'Contabilidad creada correctamente.');
+    }
 
     // Mostrar el documento mensual.
     public function show(MonthlyAccount $monthlyAccount): View
@@ -140,10 +136,11 @@ public function store(Request $request): RedirectResponse
     }
 
     // Actualizar una contabilidad.
-    public function update(
-        Request $request,
-        MonthlyAccount $monthlyAccount
-    ): RedirectResponse {
+    public function update(Request $request, MonthlyAccount $monthlyAccount): RedirectResponse 
+    {
+        // Impedir editar los datos de un registro mensual cerrado.
+        abort_if($monthlyAccount->closed_at !== null,403,'No se puede editar un registro mensual cerrado.');
+
         $data = $request->validate([
             'year' => ['required', 'integer', 'between:2000,2100'],
             'month' => ['required', 'integer', 'between:1,12'],
@@ -166,25 +163,35 @@ public function store(Request $request): RedirectResponse
         if ($exists) {
             return back()
                 ->withInput()
-                ->withErrors([
-                    'month' => 'Ya existe una contabilidad para este mes y año.',
-                ]);
+                ->withErrors(['month' => 'Ya existe una contabilidad para este mes y año.',]);
         }
 
         $monthlyAccount->update($data);
 
-        return redirect()
-            ->route('monthly-accounts.show', $monthlyAccount)
-            ->with('success', 'Contabilidad actualizada correctamente.');
+        return redirect()->route('monthly-accounts.show', $monthlyAccount)->with('success', 'Contabilidad actualizada correctamente.');
+    }    
+  
+    /**
+     * Cerrar un registro mensual.
+     * Impide futuras modificaciones del documento.
+     */
+    public function close(MonthlyAccount $monthlyAccount): RedirectResponse 
+    {
+        // Impedir cerrar nuevamente un documento cerrado.
+        abort_if($monthlyAccount->closed_at !== null, 403, 'Este registro mensual ya está cerrado.');
+        // Guardar la fecha y hora del cierre.
+        $monthlyAccount->closed_at = now();
+        $monthlyAccount->save();
+        // Volver al documento mensual.
+        return redirect()->route('monthly-accounts.show', $monthlyAccount)->with('success','El registro mensual fue cerrado correctamente.');
     }
 
     /**
      * Vaciar todos los gastos de un registro mensual.
      * Conserva el documento y el catálogo general.
      */
-    public function clear(
-        MonthlyAccount $monthlyAccount
-    ): RedirectResponse {
+    public function clear(MonthlyAccount $monthlyAccount): RedirectResponse 
+    {
 
         // Impedir modificaciones si el documento está cerrado.
         abort_if(
@@ -207,9 +214,8 @@ public function store(Request $request): RedirectResponse
 
 
     // Eliminar una contabilidad mensual.
-    public function destroy(
-        MonthlyAccount $monthlyAccount
-    ): RedirectResponse {
+    public function destroy(MonthlyAccount $monthlyAccount): RedirectResponse 
+    {
         $monthlyAccount->delete();
 
         return redirect()
