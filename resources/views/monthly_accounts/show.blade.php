@@ -696,7 +696,7 @@
                         <i class="ti ti-refresh me-1"></i>
                         Limpiar
                     </button>
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" id="btnAgregarGasto" class="btn btn-primary">
                         <i class="ti ti-plus me-1"></i>
                         Agregar gasto
                     </button>
@@ -799,6 +799,37 @@ document.addEventListener('DOMContentLoaded', function () {
             rutaBase + '/' + encodeURIComponent(gastoId);
 
         formularioEliminar.dataset.ready = 'true';
+    });
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const formulario = document.getElementById('expenseForm');
+    const boton = document.getElementById('btnAgregarGasto');
+
+    if (!formulario || !boton) {
+        return;
+    }
+
+    let enviando = false;
+
+    formulario.addEventListener('submit', function (event) {
+        if (enviando) {
+            event.preventDefault();
+            return;
+        }
+
+        if (!formulario.checkValidity()) {
+            return;
+        }
+
+        enviando = true;
+
+        boton.disabled = true;
+        boton.innerHTML = `
+            <span class="spinner-border spinner-border-sm me-2"
+                  aria-hidden="true"></span>
+            Guardando...
+        `;
     });
 });
 
